@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<project name="assemblescripts" default="assembly">
+    <description>Concat JavaScript files</description>
+
+    <property name="target.dir" value="${project.build.directory}/javascript"></property>
+    <property name="source.dir" value="${basedir}/src/main/java"></property>
+    <property name="ajax4jsf.scripts.path" value="org/ajax4jsf/javascript/scripts"></property>
+    <property name="richfaces.scripts.path" value="org/richfaces/renderkit/html/scripts"></property>
+
+    <filelist id="scriptaculous"
+        dir="${basedir}/src/main/java/${richfaces.scripts.path}/scriptaculous"
+        files="builder.js,effects.js,dragdrop.js,controls.js,slider.js,sound.js">
+    </filelist>
+
+    <target name="assembly" depends="depends" description="Concat JavaScripts files">
+        <concat append="false"
+            binary="false"
+            destfile="${target.dir}/${richfaces.scripts.path}/scriptaculous/scriptaculous.js"
+            fixlastline="yes"
+            eol="unix">
+            <filelist refid="scriptaculous"></filelist>
+        </concat>
+        <copy todir="${target.dir}/${ajax4jsf.scripts.path}">
+            <fileset dir="${source.dir}/${ajax4jsf.scripts.path}" includes="**/*.js"/>
+        </copy>
+        <copy todir="${target.dir}/${richfaces.scripts.path}">
+            <fileset dir="${source.dir}/${richfaces.scripts.path}" includes="**/*.js"/>
+        </copy>
+    </target>
+
+    <target name="fixeol" depends="depends" description="Fix CR/LF in files">
+        <fixcrlf srcdir="${basedir}" includes="*.js" eol="unix">
+        </fixcrlf>
+    </target>
+
+    <target name="depends">
+    </target>
+
+</project>
+
