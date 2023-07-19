@@ -1317,7 +1317,7 @@ Ajax.Request = Class.create(Ajax.Base, {
 
       var contentType = response.getHeader('Content-type');
       if (this.options.evalJS == 'force'
-          || (this.options.evalJS && contentType
+          || (this.options.evalJS && this.isSameOrigin() && contentType
               && contentType.match(/^\s*(text|application)\/(x-)?(java|ecma)script(;.*)?\s*$/i)))
         this.evalResponse();
     }
@@ -1333,6 +1333,15 @@ Ajax.Request = Class.create(Ajax.Base, {
       // avoid memory leak in MSIE: clean up
       this.transport.onreadystatechange = Prototype.emptyFunction;
     }
+  },
+
+  isSameOrigin: function() {
+    var m = this.url.match(/^\s*https?:\/\/[^/]*/);
+    return !m || (m[0] == '#{protocol}//#{domain}#{port}'.interpolate({
+      protocol: location.protocol,
+      domain: document.domain,
+      port: location.port ? ':' + location.port : ''
+    }));
   },
 
   getHeader: function(name) {
@@ -1410,7 +1419,7 @@ Ajax.Response = Class.create({
     if (!json) return null;
     json = decodeURIComponent(escape(json));
     try {
-      return json.evalJSON(this.request.options.sanitizeJSON);
+      return json.evalJSON(this.request.options.sanitizeJSON || !this.request.isSameOrigin());
     } catch (e) {
       this.request.dispatchException(e);
     }
@@ -1422,7 +1431,7 @@ Ajax.Response = Class.create({
       !(this.getHeader('Content-type') || '').include('application/json')))
         return null;
     try {
-      return this.transport.responseText.evalJSON(options.sanitizeJSON);
+      return this.transport.responseText.evalJSON(options.sanitizeJSON || !this.request.isSameOrigin());
     } catch (e) {
       this.request.dispatchException(e);
     }
