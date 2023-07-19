@@ -211,4 +211,10 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+  <distributionManagement>
+    <repository>
+      <id>epam-repository</id>
+      <url>https://jenkins.slon-srm.projects.epam.com/artifactory/SLON-SRM</url>
+    </repository>
+  </distributionManagement>
 </project>

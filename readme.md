@@ -1,23 +1,49 @@
 SupplyOn RichFaces 3.2.1.GA Fork
 ================================
 
+# Resources 
+
+| Name                      | Description                                       |
+|---------------------------|---------------------------------------------------|
+| RichFaces Repository      | https://repository.jboss.org/maven2/org/richfaces |
+| RichFaces 3.3 Nuxeo Fork  | https://github.com/nuxeo/richfaces-3.3            |
+| SupplyOn RichFaces Fixes  | https://doc.supplyon.de/x/woWZBg                  |
+ 
+
 # Prerequisites
 
 1. Download and Install maven: `apache-maven-3.9.3` from: [Apache Distribution Directory](https://dlcdn.apache.org/maven/maven-3/3.9.3/binaries/apache-maven-3.9.3-bin.zip)
  
-2. Download and Install `jdk1.5.0_12` from: [Oracle Archive Download](https://www.oracle.com/java/technologies/java-archive-javase5-downloads.html)
+2. Download and Install `jdk1.5.0_12` from: [Oracle Archive Download](https://www.oracle.com/java/technologies/java-archive-javase5-downloads.html)  
  Also archive could be found at: `Project Shared Directory`: `\\epam.com\Projects\Minsk\SLON-INIT\Software\java\jdk-1_5_0_12-windows-i586-p.exe`
  
-3. Copy `toolchnains.xml` to `~/m2./toolchains.xml`
+3. Copy `toolchnains.xml` to `~/m2./toolchains.xml` 
 ```cmd
 copy toolchnains.xml ~/m2/toolchains.xml
 ```
+
+4. Copy `settings.xml` to `~/m2/settings.xml` and set `password` to correct value for `epam-repository`
+```cmd
+copy settings.xml ~/m2/settings.xml
+```
+ 
 
 # Build project
 
 ```cmd
 mvn clean package
 ```
+
+# Publish project
+
+- Publish project to [epam-repository](https://jenkins.slon-srm.projects.epam.com/artifactory/SLON-SRM)   
+  Note: check that username/password was defined for `epam-repository` in `~/m2/settings.xml`   
+```cmd
+mvn deploy
+```
+
+- Copy generated artifacts to permanent storage according to [Adding new libraries to Artifactory](https://doc.supplyon.de/x/_YiZBg).
+  Path in Bit Bucket repository: [RichFaces artifacts](https://bitbucket.supplyon.de/projects/EXT_SRMPORTAL/repos/supplyon-gradle-utils/browse/upload-artifacts/supplyon-artifacts/repository/com/supplyon/richfaces/richfaces-impl)
 
 # Notes
 - Java `1.5.0_12` is used to build the project 
