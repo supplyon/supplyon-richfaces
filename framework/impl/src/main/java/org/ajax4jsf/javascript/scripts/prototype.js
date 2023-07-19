@@ -1317,8 +1317,8 @@ Ajax.Request = Class.create(Ajax.Base, {
 
       var contentType = response.getHeader('Content-type');
       if (this.options.evalJS == 'force'
-          || (this.options.evalJS && this.isSameOrigin() && contentType
-          && contentType.match(/^\s*(text|application)\/(x-)?(java|ecma)script(;.*)?\s*$/i)))
+          || (this.options.evalJS && contentType
+              && contentType.match(/^\s*(text|application)\/(x-)?(java|ecma)script(;.*)?\s*$/i)))
         this.evalResponse();
     }
 
@@ -1335,15 +1335,6 @@ Ajax.Request = Class.create(Ajax.Base, {
     }
   },
 
-  isSameOrigin: function() {
-    var m = this.url.match(/^\s*https?:\/\/[^\/]*/);
-    return !m || (m[0] == '#{protocol}//#{domain}#{port}'.interpolate({
-      protocol: location.protocol,
-      domain: document.domain,
-      port: location.port ? ':' + location.port : ''
-    }));
-  },
-   
   getHeader: function(name) {
     try {
       return this.transport.getResponseHeader(name);
@@ -1419,8 +1410,7 @@ Ajax.Response = Class.create({
     if (!json) return null;
     json = decodeURIComponent(escape(json));
     try {
-      return json.evalJSON(this.request.options.sanitizeJSON ||
-         !this.request.isSameOrigin());
+      return json.evalJSON(this.request.options.sanitizeJSON);
     } catch (e) {
       this.request.dispatchException(e);
     }
@@ -1432,8 +1422,7 @@ Ajax.Response = Class.create({
       !(this.getHeader('Content-type') || '').include('application/json')))
         return null;
     try {
-      return this.transport.responseText.evalJSON(options.sanitizeJSON ||
-        !this.request.isSameOrigin());
+      return this.transport.responseText.evalJSON(options.sanitizeJSON);
     } catch (e) {
       this.request.dispatchException(e);
     }
@@ -3729,7 +3718,13 @@ Event.Methods = (function() {
   if (Prototype.Browser.IE) {
     var buttonMap = { 0: 1, 1: 4, 2: 2 };
     isButton = function(event, code) {
-      return event.button == buttonMap[code];
+      if (event.which) {
+        // var buttonMap_IE9 = { 0: 1, 1: 2, 2: 3};
+        // return event.which == buttonMap_IE9[code];
+        return event.which == { 0: 1, 1: 2, 2: 3}[code];
+      } else {
+        return event.button == buttonMap[code];
+      }
     };
 
   } else if (Prototype.Browser.WebKit) {

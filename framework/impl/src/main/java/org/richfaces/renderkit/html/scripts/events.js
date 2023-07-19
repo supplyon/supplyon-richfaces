@@ -6,13 +6,7 @@ Richfaces.SYNTHETIC_EVENT = "Richfaces.SYNTHETIC_EVENT";
 Richfaces.createEvent = function (type, component, baseEvent, props) {
 	var eventObj;
 	
-	if (document.createEventObject) {
-		if (baseEvent) {
-			eventObj = document.createEventObject(baseEvent);
-		} else {
-			eventObj = document.createEventObject();
-		}
-	} else {
+	if (document.createEvent) {
 		var bubbles = baseEvent && baseEvent.bubbles || false;
 		var cancelable = baseEvent && baseEvent.cancelable || true;		
 		
@@ -107,6 +101,12 @@ Richfaces.createEvent = function (type, component, baseEvent, props) {
 				eventObj = document.createEvent('Events');
 				eventObj.initEvent(type, bubbles, cancelable);
 		}
+	} else if (document.createEventObject) {
+		if (baseEvent) {
+			eventObj = document.createEventObject(baseEvent)
+		} else {
+			eventObj = document.createEventObject()
+		}
 	}
 
 	if (props) {
@@ -118,10 +118,10 @@ Richfaces.createEvent = function (type, component, baseEvent, props) {
 	return {
 		event: eventObj,
 		fire: function() {
-			if (component.fireEvent) {
+			if (component.dispatchEvent) {
+				component.dispatchEvent(this.event)
+			} else if (component.fireEvent) {
 				component.fireEvent("on" + type, this.event);
-			} else {
-				component.dispatchEvent(this.event);
 			}
 		}
 	};

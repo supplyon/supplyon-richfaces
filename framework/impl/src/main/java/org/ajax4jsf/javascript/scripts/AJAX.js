@@ -62,7 +62,9 @@ Sarissa._SARISSA_IS_SAFARI = navigator.userAgent.toLowerCase().indexOf("safari")
 /** @private */
 Sarissa._SARISSA_IS_SAFARI_OLD = Sarissa._SARISSA_IS_SAFARI && (parseInt((navigator.userAgent.match(/AppleWebKit\/(\d+)/)||{})[1], 10) < 420);
 /** @private */
-Sarissa._SARISSA_IS_IE = document.all && window.ActiveXObject && navigator.userAgent.toLowerCase().indexOf("msie") > -1  && navigator.userAgent.toLowerCase().indexOf("opera") == -1;
+Sarissa._SARISSA_IS_IE = (window.ActiveXObject && document.all && (navigator.userAgent.toLowerCase().indexOf("msie") > -1 && navigator.userAgent.toLowerCase().indexOf("opera") == -1)) || (navigator.userAgent.toLowerCase().indexOf("trident") > -1);
+/** @private */
+Sarissa._SARISSA_IS_IE9 = Sarissa._SARISSA_IS_IE;
 /** @private */
 Sarissa._SARISSA_IS_OPERA = navigator.userAgent.toLowerCase().indexOf("opera") != -1;
 if(!window.Node || !Node.ELEMENT_NODE){
@@ -458,7 +460,7 @@ if(Sarissa._SARISSA_IS_IE){
 //==========================================
 // Common stuff
 //==========================================
-if(!window.DOMParser){
+if(!window.DOMParser || Sarissa._SARISSA_IS_IE9){
     if(Sarissa._SARISSA_IS_SAFARI){
         /*
          * DOMParser is a utility class, used to construct DOMDocuments from XML strings
@@ -487,7 +489,7 @@ if(!window.DOMParser){
     }
 }
 
-if((typeof(document.importNode) == "undefined") && Sarissa._SARISSA_IS_IE){
+if(((typeof(document.importNode) == "undefined") && Sarissa._SARISSA_IS_IE) || Sarissa._SARISSA_IS_IE9){
     try{
         /**
         * Implementation of importNode for the context window document in IE.
@@ -580,7 +582,7 @@ Sarissa.getText = function(oNode, deep){
     }
     return s;
 };
-if(!window.XMLSerializer && Sarissa.getDomDocument && Sarissa.getDomDocument("","foo", null).xml){
+if((!window.XMLSerializer || Sarissa._SARISSA_IS_IE9) && Sarissa.getDomDocument && Sarissa.getDomDocument("","foo", null).xml){
     /**
      * Utility class to serialize DOM Node objects to XML strings
      * @constructor
@@ -1330,7 +1332,8 @@ A4J.AJAX.XMLHttpRequest.prototype = {
    		        	LOG.error("Error to clear node content by innerHTML "+e.message);
 					Sarissa.clearChildNodes(oldnode);
    		        }
-   		        oldnode.outerHTML = new XMLSerializer().serializeToString(newnode);
+   		        //oldnode.outerHTML = new XMLSerializer().serializeToString(newnode);
+                oldnode.outerHTML = (Sarissa._SARISSA_IS_IE && typeof newnode.xml != "undefined") ? newnode.xml : new XMLSerializer().serializeToString(newnode);
 			} else {
 		    	var importednode ;
     // need to check for firstChild due to opera 8 bug with hasChildNodes
@@ -1819,7 +1822,7 @@ A4J.AJAX.processResponse = function(req) {
         	  }
         	  // Replace client-side hidden inputs for JSF View state.
         	  var idsSpan = req.getElementById("ajax-view-state");
-	          LOG.debug("Hidden JSF state fields: "+idsSpan);
+	          // LOG.debug("Hidden JSF state fields: "+idsSpan);
         	  if(idsSpan != null){
         	  	// For a portal case, replace content in the current window only.
 			        var namespace = options.parameters['org.ajax4jsf.portlet.NAMESPACE'];
@@ -1867,7 +1870,7 @@ A4J.AJAX.processResponse = function(req) {
         	  		focusElement = document.getElementById(focusId);
         	  	}
         	  	if(focusElement){
-        	  		LOG.debug("Set focus to control ");
+        	  		// LOG.debug("Set focus to control ");
         	  		focusElement.focus();
         	  		if (focusElement.select) focusElement.select();
         	  	} else {
@@ -2369,7 +2372,12 @@ if (!document.all || window.opera){
 			// Simulate same calls as on XmlHttp
 			var oDomDoc = Sarissa.getDomDocument();
 			var _span = document.createElement("span");
-			document.documentElement.appendChild(_span);
+			//document.documentElement.appendChild(_span);
+            if (Prototype.Browser.WebKit || Prototype.Browser.Gecko) {
+                document.body.appendChild(_span);
+            } else {
+                document.documentElement.appendChild(_span);
+            }
 			// If script evaluated with used replace method, variable will be set to true
 			var xmlString = "<html xmlns='http://www.w3.org/1999/xhtml'><sc"+"ript>A4J.AJAX._scriptEvaluated=true;</scr"+"ipt></html>";
 			oDomDoc = (new DOMParser()).parseFromString(xmlString, "text/xml");

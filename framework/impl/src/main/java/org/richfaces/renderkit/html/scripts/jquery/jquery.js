@@ -30,7 +30,7 @@ window.$ = jQuery;
 
 // A simple way to check for HTML strings or ID strings
 // Strict HTML recognition (#11290: must start with <)
-var quickExpr = /^(?:(<[\w\W]+>)[^>]*|#([\w-]*))$/;
+var quickExpr = /^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/;
 
 // Is it a simple selector
 var isSimple = /^.[^:#\[\.]*$/;
@@ -595,7 +595,8 @@ jQuery.extend = jQuery.fn.extend = function() {
 				
 				// Prevent Object.prototype pollution
 				// Prevent never-ending loop
-				if ( name === "__proto__" || target === options[ name ] )
+				//if ( name === "__proto__" || target === options[ name ] )
+				if ( target === options[ name ] )
 					continue;
 
 				// Recurse if we're merging object values
@@ -2555,14 +2556,6 @@ jQuery.extend({
 			_default: "*/*"
 		}
 	},
-
-	// Prevent auto-execution of scripts when no explicit dataType was provided (See gh-2432)
-    ajaxPrefilter: function( s ) {
-        if ( s.crossDomain ) {
-            s.contents.script = false;
-        }
-	},
-		
 	// Last-Modified header cache for next request
 	lastModified: {},
 
