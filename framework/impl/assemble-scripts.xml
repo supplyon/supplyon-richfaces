@@ -9,11 +9,11 @@
 
     <filelist id="scriptaculous"
         dir="${basedir}/src/main/java/${richfaces.scripts.path}/scriptaculous"
-        files="builder.js,effects.js,dragdrop.js,controls.js,slider.js,sound.js">
+        files="builder.js, effects.js, dragdrop.js, controls.js, slider.js, sound.js">
     </filelist>
     <filelist id="jquery"
         dir="${basedir}/src/main/java/${richfaces.scripts.path}/jquery"
-        files="jquery-3.7.0-patched.js,jquery.richfaces.js">
+        files="jquery-3.7.0-patched.js, jquery.richfaces.js">
     </filelist>
 
     <target name="assemble" depends="depends" description="Concat JavaScripts files">

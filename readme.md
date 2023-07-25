@@ -48,7 +48,7 @@ mvn deploy
 # Notes
 - Java `1.5.0_12` is used to build the project 
   `framework/impl/pom.xml`
-  ```
+  ```xml
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-toolchains-plugin</artifactId>
@@ -71,9 +71,9 @@ mvn deploy
       </plugin>
   ```
  
-- `scriptaculous.js` is assembled as concat of files: `builder.js,effects.js,dragdrop.js,controls.js,slider.js,sound.js` 
+- `scriptaculous.js` is assembled as concat of files: `builder.js, effects.js, dragdrop.js, controls.js, slider.js, sound.js` 
   using Apache Ant script: `generatescript.xml`
-  ```
+  ```xml
         <concat append="false"
             binary="false"
             destfile="${target.dir}/${richfaces.scripts.path}/scriptaculous/scriptaculous.js"
@@ -83,8 +83,10 @@ mvn deploy
         </concat>
   ``` 
   
-- JavaScript files are copied to `target` directory using Apache Ant script `generatescript.xml`
-  ```
+- `jquery.js` is assembled as concat of fies: `jquery-3.7.0-patched.js, jquery.richfaces.js` 
+ 
+- JavaScript files are copied to `target` directory using Apache Ant script `assemble-scripts.xml`
+  ```xml
         <copy todir="${target.dir}/${ajax4jsf.scripts.path}">
             <fileset dir="${source.dir}/${ajax4jsf.scripts.path}" includes="**/*.js"/>
         </copy>
@@ -95,7 +97,7 @@ mvn deploy
    
 - JavaScript files are compressed and concat into `framework.pack.js` file using `org.richfaces.cdk:maven-javascript-plugin` plugin
   `framework/impl/pom.xml`
-  ```
+  ```xml
       <plugin>
         <groupId>org.richfaces.cdk</groupId>
         <artifactId>maven-javascript-plugin</artifactId>
@@ -109,4 +111,19 @@ mvn deploy
         </dependencies>
       </plugin>
   ``` 
+- To switch `on` or `off` javascript files minification in `framework.pack.js` use option `<nomunge>false</nomunge>` or `<nomunge>true</nomunge>`
+ `framework/impl/pom.xml`
+  ```xml
+        <executions>
+          <execution>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+            <configuration>
+              <nosuffix>false</nosuffix>
+              <!-- Uncomment to disable minification -->
+              <!-- <nomunge>true</nomunge> -->
+              <outputDirectory>${project.build.directory}/compressed/</outputDirectory>
+  
+  ```
  
