@@ -82,8 +82,8 @@
             </goals>
             <configuration>
               <tasks>
-                <ant antfile="${basedir}/generatescript.xml" inheritRefs="true">
-                  <target name="assembly"></target>
+                <ant antfile="${basedir}/assemble-scripts.xml" inheritRefs="true">
+                  <target name="assemble"></target>
                   <property name="target-dir" value="${project.build.directory}/javascript"></property>
                 </ant>
               </tasks>
@@ -110,6 +110,8 @@
             </goals>
             <configuration>
               <nosuffix>false</nosuffix>
+              <!-- Uncomment to disable minification -->
+              <!-- <nomunge>true</nomunge> -->
               <outputDirectory>${project.build.directory}/compressed/</outputDirectory>
               <aggregations>
                 <aggregation>
@@ -142,6 +144,7 @@
                   <excludes>
                     <exclude>**/*.pack.js</exclude>
                     <exclude>**/scriptaculous/*.js</exclude>
+                    <exclude>**/jquery/*.js</exclude>
                     <exclude>**/extend-min.js</exclude>
                     <exclude>**/jquery.jcarousel-min.js</exclude>
                     <exclude>**/compressed.css</exclude>

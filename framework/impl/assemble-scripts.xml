@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<project name="assemblescripts" default="assembly">
-    <description>Concat JavaScript files</description>
+<project name="assemble-scripts" default="assemble">
+    <description>Assemble JavaScript files</description>
 
     <property name="target.dir" value="${project.build.directory}/javascript"></property>
     <property name="source.dir" value="${basedir}/src/main/java"></property>
@@ -11,14 +11,25 @@
         dir="${basedir}/src/main/java/${richfaces.scripts.path}/scriptaculous"
         files="builder.js,effects.js,dragdrop.js,controls.js,slider.js,sound.js">
     </filelist>
+    <filelist id="jquery"
+        dir="${basedir}/src/main/java/${richfaces.scripts.path}/jquery"
+        files="jquery-3.7.0-patched.js,jquery.richfaces.js">
+    </filelist>
 
-    <target name="assembly" depends="depends" description="Concat JavaScripts files">
+    <target name="assemble" depends="depends" description="Concat JavaScripts files">
         <concat append="false"
             binary="false"
             destfile="${target.dir}/${richfaces.scripts.path}/scriptaculous/scriptaculous.js"
             fixlastline="yes"
             eol="unix">
             <filelist refid="scriptaculous"></filelist>
+        </concat>
+        <concat append="false"
+            binary="false"
+            destfile="${target.dir}/${richfaces.scripts.path}/jquery/jquery.js"
+            fixlastline="yes"
+            eol="unix">
+            <filelist refid="jquery"></filelist>
         </concat>
         <copy todir="${target.dir}/${ajax4jsf.scripts.path}">
             <fileset dir="${source.dir}/${ajax4jsf.scripts.path}" includes="**/*.js"/>
