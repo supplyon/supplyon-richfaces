@@ -8,7 +8,7 @@
   <groupId>com.supplyon.richfaces</groupId>
   <artifactId>richfaces-impl</artifactId>
   <name>Java Server Faces AJAX framework implementation</name>
-  <version>3.2.1.GA-20230707</version>
+  <version>3.2.1.GA.20230707-SNAPSHOT</version>
   <build>
     <resources>
       <resource>
